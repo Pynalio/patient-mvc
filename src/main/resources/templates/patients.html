@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz./thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="template1"
 
 >
@@ -12,9 +13,9 @@
 <body>
 <div layout:fragment="content1">
 <h3> Listes des patients </h3>
-<form method="get" th:action="@{index}">
+<form method="get" th:action="@{/user/index}">
     <label>
-        key word
+        keyword
     </label>
     <input type="text" name="keyword" th:value="${keyword}">
     <button type="submit" class="btn btn-primary ">chercher</button>
@@ -31,7 +32,7 @@
 
     </thead>
     <tbody>
-
+<!--html-->
 
     <tr th:each="p:${listPatient}">
         <td th:text="${p.id}"></td>
@@ -39,11 +40,11 @@
         <td th:text="${p.malade}"></td>
         <td th:text="${p.dateNaissance}"></td>
         <td th:text="${p.score}"></td>
-        <td>
-            <a onclick="return confirm('etes vous sur')" class="btn btn-danger" th:href="@{delete(id=${p.id},keyword=${keyword},page=${currentpage})}">Delete</a>
+        <td sec:authorize="hasRole('ADMIN')">
+            <a onclick="return confirm('etes vous sur')" class="btn btn-danger" th:href="@{/admin/delete(id=${p.id},keyword=${keyword},page=${currentpage})}">Delete</a>
         </td>
-        <td>
-            <a  class="btn btn-success" th:href="@{editPatient(id=${p.id})}">Edit</a>
+            <td sec:authorize="hasRole('ADMIN')" >
+            <a  class="btn btn-success" th:href="@{/admin/editPatient(id=${p.id},keyword=${keyword},page=${currentpage})}">Edit</a>
         </td>
     </tr>
     </tbody>
@@ -52,7 +53,7 @@
 <ul class="nav nav-pills ">
     <li th:each="p,status:${pages}">
         <a th:class="${status.index==currentpage?'btn btn-primary ms-1':'btn btn-outline-primary ms-1'}" th:text="${status.index}-${status.current}"
-        th:href="@{/index(page=${status.index},keyword=${keyword})}"
+        th:href="@{/user/index(page=${status.index},keyword=${keyword})}"
 
         >
 
