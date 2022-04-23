@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -22,7 +23,7 @@ public class PatientController {
     private PatientRepository patientRepository;
 
     @GetMapping(path="/user/index")
-public String patients(Model model,@RequestParam(value = "size",defaultValue = "5") int size,@RequestParam(value = "page",defaultValue = "0")int page,@RequestParam(value = "keyword",defaultValue = "") String keyword){
+    public String patients(Model model,@RequestParam(value = "size",defaultValue = "5") int size,@RequestParam(value = "page",defaultValue = "0")int page,@RequestParam(value = "keyword",defaultValue = "") String keyword){
         Page<Patient> pagePatients=patientRepository.findByNomContains(keyword,PageRequest.of(page,size));
         model.addAttribute("listPatient",pagePatients.getContent());
         model.addAttribute("pages",new int[pagePatients.getTotalPages()]);
@@ -31,11 +32,9 @@ public String patients(Model model,@RequestParam(value = "size",defaultValue = "
         return "patients";
 
 
-}
+    }
     @GetMapping(path="/")
     public String home(){
-
-
 
         return "home";
     }
@@ -52,10 +51,10 @@ public String patients(Model model,@RequestParam(value = "size",defaultValue = "
     public String formPatient(Model model){
         model.addAttribute("patient",new Patient());
 
-   return "formPatient";
+        return "formPatient";
     }
 
-    @PostMapping(path ="/admin/save" )
+    @PostMapping(path ="/admin/save")
     public String save(Model model, @Valid Patient patient, BindingResult bindingResult,@RequestParam(defaultValue = "0")  String keyword,@RequestParam(defaultValue = "") int page){
         //bindingresult stokage la collection de erreurs
         if (bindingResult.hasErrors())return "formPatient";

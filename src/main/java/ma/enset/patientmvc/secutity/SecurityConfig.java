@@ -1,5 +1,6 @@
 package ma.enset.patientmvc.secutity;
 
+import ma.enset.patientmvc.secutity.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,6 +8,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -18,17 +22,31 @@ import javax.sql.DataSource;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired //injecter celui qu on a declarer le fichier app.prop
     private DataSource dataSource;
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
+    @Autowired
+   private PasswordEncoder passwordEncoder;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        PasswordEncoder passwordEncoder=passwordEncoder();
 
-        auth.jdbcAuthentication().dataSource(dataSource).usersByUsernameQuery("select username as principal ,password as credentials ,active from users where username=?").
+        //il faut evite PasswordEncoder dans une class extends de WebSecurityConfigurerAdapter
+
+
+       /* PasswordEncoder passwordEncoder=passwordEncoder();*/
+
+        /*auth.jdbcAuthentication().dataSource(dataSource).usersByUsernameQuery("select username as principal ,password as credentials ,active from users where username=?").
                 authoritiesByUsernameQuery("select username as principal, role from users_roles where username=?  ").rolePrefix("ROLE_").
-                passwordEncoder(passwordEncoder);
+                passwordEncoder(passwordEncoder);*/
 
-
-
+       /* auth.userDetailsService(new UserDetailsService() {
+            @Override
+            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                return null;
+            }
+        });*/
+    //quand l utilisateur s auth on va se dirige par l objet userDetailsService a la clase userDetailsServiceImpl pour identifer comment on va chercher utilisateur
+      auth.userDetailsService(userDetailsService);
 
 
 
@@ -53,17 +71,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
        /* http.authorizeRequests().antMatchers("/formPatient/**").hasRole("ADMIN");*/
         //tout ce qui lier a /admin doit etre auth en tant que admin
-        http.authorizeRequests().antMatchers("/admin/**").hasRole("ADMIN");
-        http.authorizeRequests().antMatchers("/user/**").hasRole("USER");
+        http.authorizeRequests().antMatchers("/admin/**").hasAuthority("ADMIN");
+        http.authorizeRequests().antMatchers("/user/**").hasAuthority("USER");
         //obligatoire
+        http.authorizeRequests().antMatchers("/webjars/**").permitAll();
         http.authorizeRequests().anyRequest().authenticated();
+
         //gerer les exception
         http.exceptionHandling().accessDeniedPage("/403");
 
     }
-    @Bean
-    PasswordEncoder passwordEncoder(){
 
-        return new BCryptPasswordEncoder();
-    }
 }

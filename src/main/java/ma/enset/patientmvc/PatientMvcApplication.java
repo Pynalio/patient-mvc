@@ -2,15 +2,20 @@ package ma.enset.patientmvc;
 
 import ma.enset.patientmvc.entities.Patient;
 import ma.enset.patientmvc.repositories.PatientRepository;
+import ma.enset.patientmvc.secutity.service.SecurityService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Date;
 
 @SpringBootApplication
 public class PatientMvcApplication {
+
+
 
     /*@Bean *///au demarrage execute cette methode
     CommandLineRunner commandLineRunner(PatientRepository p){
@@ -31,9 +36,36 @@ public class PatientMvcApplication {
 
         };
     }
+    /*@Bean*/
+    CommandLineRunner saveUsers(SecurityService securityService){
+        return args -> {
+            securityService.saveUser("mohamed","1234","1234");
+            securityService.saveUser("yasmine","1234","1234");
+            securityService.saveUser("hasna","1234","1234");
+
+            securityService.saveNewRole("USER"," ");
+            securityService.saveNewRole("ADMIN"," ");
+
+            securityService.addRoleToUser("mohamed","USER");
+             securityService.addRoleToUser("mohamed","ADMIN");
+            securityService.addRoleToUser("yasmine","USER");
+            securityService.addRoleToUser("hasna","USER");
+
+        };
+
+
+    }
+
+
 
     public static void main(String[] args) {
         SpringApplication.run(PatientMvcApplication.class, args);
-    }
 
+
+    }
+    @Bean
+    PasswordEncoder passwordEncoder(){
+
+        return new BCryptPasswordEncoder();
+    }
 }
