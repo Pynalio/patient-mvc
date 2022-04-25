@@ -57,7 +57,8 @@ public class PatientController {
     @PostMapping(path ="/admin/save")
     public String save(Model model, @Valid Patient patient, BindingResult bindingResult,@RequestParam(defaultValue = "0")  String keyword,@RequestParam(defaultValue = "") int page){
         //bindingresult stokage la collection de erreurs
-        if (bindingResult.hasErrors())return "formPatient";
+        if (bindingResult.hasErrors()) return "formPatient";
+        //on a deja un patient par defaut on la afficher il contient rien alors si on sasie les infos c est comme si on fait une mise a jour au patient par defaut
         //pour ajouter ou pour faire la mise a jour
         patientRepository.save(patient);
 

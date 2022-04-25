@@ -12,55 +12,61 @@
 </head>
 <body>
 <div layout:fragment="content1">
-<h3> Listes des patients </h3>
-<form method="get" th:action="@{/user/index}">
-    <label>
-        keyword
-    </label>
-    <input type="text" name="keyword" th:value="${keyword}">
-    <button type="submit" class="btn btn-primary ">chercher</button>
+    <div class="card-header"> <h3> Liste des patients</h3> </div>
+    <div class="card-body">
+    <form method="get" th:action="@{/user/index}">
+        <label>
+            keyword
+        </label>
+        <input type="text" name="keyword" th:value="${keyword}">
+        <button type="submit" class="btn btn-primary ">chercher</button>
 
 
 
-</form>
-<table class="table">
-    <thead>
-    <tr>
-        <th>id</th><th>NOM</th><th>Malade<th><th>Date</th><th>Score</th>
+    </form>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>NOM</th>
+            <th>Malade</th>
+            <th>Date</th>
+            <th>Score</th>
 
-    </tr>
+        </tr>
 
-    </thead>
-    <tbody>
-<!--html-->
+        </thead>
+        <tbody>
+        <!--html-->
 
-    <tr th:each="p:${listPatient}">
-        <td th:text="${p.id}"></td>
-        <td th:text="${p.nom}"></td>
-        <td th:text="${p.malade}"></td>
-        <td th:text="${p.dateNaissance}"></td>
-        <td th:text="${p.score}"></td>
-        <td sec:authorize="hasAuthority('ADMIN')">
-            <a onclick="return confirm('etes vous sur')" class="btn btn-danger" th:href="@{/admin/delete(id=${p.id},keyword=${keyword},page=${currentpage})}">Delete</a>
-        </td>
+        <tr th:each="p:${listPatient}">
+            <td th:text="${p.id}"></td>
+            <td th:text="${p.nom}"></td>
+            <td th:text="${p.malade}"></td>
+            <td th:text="${p.dateNaissance}"></td>
+            <td th:text="${p.score}"></td>
+            <td sec:authorize="hasAuthority('ADMIN')">
+                <a onclick="return confirm('etes vous sur')" class="btn btn-danger" th:href="@{/admin/delete(id=${p.id},keyword=${keyword},page=${currentpage})}">Delete</a>
+            </td>
             <td sec:authorize="hasAuthority('ADMIN')" >
-            <a  class="btn btn-success" th:href="@{/admin/editPatient(id=${p.id},keyword=${keyword},page=${currentpage})}">Edit</a>
-        </td>
-    </tr>
-    </tbody>
+                <a  class="btn btn-success" th:href="@{/admin/editPatient(id=${p.id},keyword=${keyword},page=${currentpage})}">Edit</a>
+            </td>
+        </tr>
+        </tbody>
 
-</table>
-<ul class="nav nav-pills ">
-    <li th:each="p,status:${pages}">
-        <a th:class="${status.index==currentpage?'btn btn-primary ms-1':'btn btn-outline-primary ms-1'}" th:text="${status.index}-${status.current}"
-        th:href="@{/user/index(page=${status.index},keyword=${keyword})}"
+    </table>
+    <ul class="nav nav-pills ">
+        <li th:each="p,status:${pages}">
+            <a th:class="${status.index==currentpage?'btn btn-primary ms-1':'btn btn-outline-primary ms-1'}" th:text="${status.index}-${status.current}"
+               th:href="@{/user/index(page=${status.index},keyword=${keyword})}"
 
-        >
+            >
 
-        </a>
-    </li>
+            </a>
+        </li>
 
-</ul>
+    </ul>
 </div>
 </body>
 </html>

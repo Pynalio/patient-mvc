@@ -22,6 +22,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AppUser appUser=securityService.loadUserByUserName(username);
+
 //on doit retourner un type userdetails
      /*   Collection<GrantedAuthority> authorities=new ArrayList<>();
         appUser.getAppRoles().forEach(role->{
